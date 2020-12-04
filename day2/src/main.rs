@@ -1,6 +1,6 @@
 extern crate regex;
 
-use std::io::{self, BufRead};xo
+use std::io::{self, BufRead};
 use regex::Regex;
 
 #[derive(Debug)]
@@ -27,7 +27,7 @@ fn check_index(r: &Rules, s: &str) -> bool
 
 type PasswordMatcher = fn(r: &Rules, s: &str) -> bool;
 
-fn count_matching(lines: &str, matcher: PasswordMatcher) -> usize
+fn count_matching(lines: &[String], matcher: PasswordMatcher) -> usize
 {
     // Recompiling the regex here is sad, but compiling it at
     // compilation time is apparently Real Hard™ in Rust. :(
