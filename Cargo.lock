@@ -32,6 +32,8 @@ name = "day4"
 version = "0.1.0"
 dependencies = [
  "itertools",
+ "lazy_static",
+ "regex",
 ]
 
 [[package]]
