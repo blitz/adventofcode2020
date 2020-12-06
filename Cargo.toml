@@ -1,6 +1,10 @@
 [workspace]
 
 members = [
+	# Libraries
+	"helpers",
+
+        # Binaries
 	"day1",
 	"day2",
 	"day3",
