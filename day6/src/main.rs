@@ -9,15 +9,15 @@ fn to_answer(s: &str) -> AnswerSet {
 }
 
 fn anyone_answered(v: &Vec<AnswerSet>) -> usize {
-    let empty_set = AnswerSet::new();
+    let identity = AnswerSet::new();
 
-    v.iter().fold(empty_set, |acc, a| acc.union(&a).cloned().collect()).len()
+    v.iter().fold(identity, |acc, a| acc.union(&a).cloned().collect()).len()
 }
 
 fn everyone_answered(v: &Vec<AnswerSet>) -> usize {
-    let empty_set: AnswerSet = (0..26).collect();
+    let identity: AnswerSet = (0..26).collect();
 
-    v.iter().fold(empty_set, |acc, a| acc.intersection(&a).cloned().collect()).len()
+    v.iter().fold(identity, |acc, a| acc.intersection(&a).cloned().collect()).len()
 }
 
 
