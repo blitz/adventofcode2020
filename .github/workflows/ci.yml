@@ -1,4 +1,4 @@
-name: Rust Example
+name: Run Tests
 
 on: [push]
 
@@ -9,4 +9,4 @@ jobs:
       - uses: actions/checkout@v1
       - uses: icepuma/rust-action@1.48.0
         with:
-          args: cargo build
+          args: cargo test
