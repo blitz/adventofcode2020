@@ -9,7 +9,7 @@ type Color = String;
 #[derive(Debug)]
 struct BagRule {
     color: Color,
-    contains: Vec<Color>
+    contains: Vec<(usize, Color)>
 }
 
 // Our internal representation of the bag rules.
@@ -18,7 +18,7 @@ type BagRuleMap = BTreeMap<Color, ColorSet>;
 
 fn to_rule_map(rules: &Vec<BagRule>) -> BagRuleMap
 {
-    rules.iter().map(|r| (r.color.clone(), r.contains.iter().cloned().collect())).collect()
+    rules.iter().map(|r| (r.color.clone(), r.contains.iter().cloned().map(|r| r.1).collect())).collect()
 }
 
 // Returns the set of colors that are reachable via the rules from a
@@ -67,7 +67,9 @@ fn to_bag_rule(s: &str) -> Option<BagRule>
     if let Some(m) = simple_re.captures(s) {
 	Some(BagRule { color: m[1].into(), contains: [].into() })
     } else if let Some(m) = complex_re.captures(s) {
-	let contents: Vec<Color> = bag_re.captures_iter(&m[2].to_string()).map(|c| c[2].to_string()).collect();
+	let contents: Vec<(usize, Color)> = bag_re.captures_iter(&m[2].to_string())
+	    .map(|c| (c[1].to_string().parse::<usize>().expect("digits"), c[2].to_string()))
+	    .collect();
 
 	Some(BagRule { color: m[1].into(), contains: contents })
 
@@ -84,12 +86,17 @@ fn input_from<T: BufRead>(input: &mut T) -> Vec<String>
 	.collect()
 }
 
+fn count_bags(rules: &Vec<BagRule>, color: &Color) -> usize
+{
+    if let Some(m) = rules.iter().find(|r| *r.color == *color) {
+	m.contains.iter().fold(0, |acc, (n, c)| acc + n * (1 + count_bags(rules, c)))
+    } else {
+	0
+    }
+}
+
 
 fn main() {
-    println!("{:?}", to_bag_rule("faded blue bags contain no other bags."));
-    println!("{:?}", to_bag_rule("vibrant plum bags contain 5 faded blue bags, 6 dotted black bags."));
-    println!("{:?}", to_bag_rule("vibrant plum bags contain 5 faded blue bags, 1 dotted red bag."));
-
     let parsed_rules : Vec<BagRule> = input_from(&mut io::stdin().lock())
 	.iter()
 	.map(|s| to_bag_rule(s).expect("a valid rule"))
@@ -101,4 +108,6 @@ fn main() {
     println!("colors that reach shiny gold: {}",
 	     closure.values().filter(|s| s.contains("shiny gold")).count());
 
+    println!("Shiny gold bag contains {} bags.",
+	     count_bags(&parsed_rules, &"shiny gold".to_string()));
 }
